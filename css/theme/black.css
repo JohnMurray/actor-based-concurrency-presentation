@@ -201,9 +201,11 @@ body {
  *********************************************/
 .reveal section img {
   margin: 15px 0px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 4px solid #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); }
+  width: 70%;
+  height: 70%
+  /*background: rgba(255, 255, 255, 0.12);*/
+  /*border: 4px solid #fff;*/
+  /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);*/ }
 
 .reveal a img {
   -webkit-transition: all 0.15s linear;
