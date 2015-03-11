@@ -108,7 +108,7 @@
 						+ Shared memory
 						+ Communicaiton usually done through shared memory
 						+ Requires synchronizaiton and locks to communicate
-						+ Execution determined by kernel's scheduler and _also_ the runtime's scheduler (usually)
+						+ Execution determined by kernel's scheduler and / or _also_ the runtime's scheduler
 
 
 						Note:
@@ -161,7 +161,7 @@
 						Just to let people understand that this is not a super obscrue concept, but something
 						that is important and gaining traction or already in use by major players today.
 
-						Notice that Erlang / Elixer are languages, the rest are frameworks.
+						Notice that Erlang / Elixer are languages, the rest are frameworks. **E-Jabber-D**
 
 						Orleans used to build backend for **Halo** multiplayer
 					</section>
@@ -403,7 +403,7 @@
 				<!-- Actor Lifecycle -->
 				<section>
 					<section data-markdown>
-						## Actor Lifecycle Management
+						# Actor Lifecycle Management
 					</section>
 
 					<section data-markdown data-background="#dddddd">
@@ -415,7 +415,7 @@
 				<section>
 
 					<section data-markdown>
-						## Actor Supervision
+						# Actor Supervision
 					</section>
 
 					<section data-markdown>
@@ -479,7 +479,7 @@
 				<section>
 
 					<section data-markdown>
-						## Actor Routing
+						# Actor Routing
 					</section>
 
 					<section data-markdown>
@@ -523,7 +523,7 @@
 				<section>
 
 					<section data-markdown>
-						## Deployment &amp; Operations
+						# Deployment &amp; Operations
 					</section>
 
 					<section data-markdown>
@@ -534,6 +534,7 @@
 							+ back pressure
 							+ message throughput
 							+ message time in mailbox
+						+ Distributed message tracing
 					</section>
 
 					<section data-markdown>
@@ -545,7 +546,7 @@
 						+ Runs stand-alone (not in container)
 
 
-						Notes:
+						Note:
 						+ Akka contains persistent connection to the other actor-system
 						+ Using **phi accrual failure detector**
 					</section>
