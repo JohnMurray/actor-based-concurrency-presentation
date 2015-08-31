@@ -87,12 +87,12 @@
 								<li class="fragment">Actors are persistent</li>
 								<li class="fragment">Encapsulate internal state</li>
 								<li class="fragment">Actors are asynchronous</li>
-								<li class="fragment">Create new actors</li>
 							</ul>
 						</section>
 						<section>
 							<h2>What Can Actors</h2>
 							<ul>
+								<li class="fragment">Create new actors</li>
 								<li class="fragment">
 									Receive messages and in response:
 									<ul>
@@ -221,41 +221,64 @@
 						<section data-markdown>
 							## Checking Account
 
-								currentBal = Checking.balance;
-								if( currentBal > withdrawlAmt ) {
-									Checking.balance -= withdrawlAmt;
-									return true;
-								} else {
-									return false;
-								}
+								01|  struct Checking {
+								02|  	balance int
+								03|  }
+								04|  
+								05|  currentBal = Checking.balance;
+								06|  if( currentBal > withdrawlAmt ) {
+								07|  	Checking.balance -= withdrawlAmt;
+								08|  	return true;
+								09|  } else {
+								10|  	return false;
+								11|  }
 						</section>
 
 						<section data-markdown>
 							## Checking Account
 
-							    actor Checking {
-							        var balance = 80
-
-								    def receive = {
-									    case Withdrawl(amt) =>
-									    	if( balance > amt ) {
-										    	balance -= amt
-										    	sender sendMsg true
-										    } else {
-											    sender sendMsg false
-											}
-									}
-								}
+								01|  struct Checking {
+								02|  	balance int
+								03|  	lock    Mutex
+								04|  }
+								05|  
+								06|  Checking.lock.Lock();
+								07|  currentBal = Checking.balance;
+								08|  if( currentBal > withdrawlAmt ) {
+								09|  	Checking.balance -= withdrawlAmt;
+								10|  	return true;
+								11|  } else {
+								12|  	return false;
+								13|  }
+								14|  Checking.lock.Free();
 						</section>
 
 						<section data-markdown>
 							## Checking Account
 
-								// send message to withdrawl 60 dollars
-							    Checking sendMsg Withdrawl(60)
+								01|  actor Checking {
+								02|  	var balance = 80
+								03|  
+								04|  	def receive = {
+								05|  		case Withdrawl(amt) =>
+								06|  			if( balance > amt ) {
+								07|  				balance -= amt
+								08|  				sender sendMsg true
+								09|  			} else {
+								10|  				sender sendMsg false
+								11|  			}
+								12|  	}
+								13|  }
+						</section>
 
-								// send message to withdrawl 50 dollars
-							    Checking sendMsg Withdrawl(50)
+						<section data-markdown>
+							## Checking Account
+
+								01|  // send message to withdrawl 60 dollars
+								02|  Checking sendMsg Withdrawl(60)
+								03|
+								04|  // send message to withdrawl 50 dollars
+								05|  Checking sendMsg Withdrawl(50)
 						</section>
 					</section>
 
