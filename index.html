@@ -15,7 +15,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+		<link rel="stylesheet" href="css/theme/serif.css" id="theme">
 
 		<!-- Code syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -45,145 +45,265 @@
 					# Actor Model
 				</section>
 
-				<!-- vanity slide -->
+				<!-- Talk Plan -->
 				<section data-markdown>
-					John Murray
+					# The Plan
 
-					Senior Software Engineer at AppNexus
-
-					Core Web Services Team
+					+ Theory
+					+ Practical Usage
+					+ Example and Further Study
 				</section>
 
-				<!-- overview of concurrency -->
-				<section>
-					<section data-markdown>
-						# Concurrency
-					</section>
-
-					<section data-markdown>
-						**Concurrency** - In computer science, concurrency is a property of systems 
-						in which several computations are executing simultaneously, and potentially 
-						interacting with each other. - _Wikipedia_
-					</section>
-
-					<section data-markdown>
-						**Parallelism** - A condition that arises when at least two threads are 
-						executing simultaneously. - _Sun's Multithreaded Programming Guide_
-					</section>
-
-					<section data-markdown>
-						To paraphrase Adrian Mouat from Stack Overflow:
-
-						> Concurrency is a property of a program or system and parallelism is the run-time
-						> behaviour of executing multiple tasks at the same time.
-					</section>
-
-					<section data-markdown>
-						This is to mean that you can achieve **concurrency** with cooperative / pre-emptive 
-						multi-tasking. 
-
-						For **parallelism** one would require multiple machines/hardware/CPUs.
-					</section>
+				<!-- Theory -->
+				<section data-markdown>
+					# Theory
 				</section>
 
-				<!-- methods of concurrency -->
-				<section>
-					<section data-markdown>
-						# Methods of Concurrency
+					<!-- Theory - Description / Definition -->
+					<section>
+						<section data-markdown>
+							## Actor Model
+
+							A method of concurrency in which the universal primitive is an actor
+						</section>
+						<section data-markdown>
+							## Other Concurrency Models
+
+							+ Process-based concurrency
+							+ Thread-based concurrency
+						</section>
 					</section>
 
-					<section data-markdown>
-						## Multiple Processes
+					<!-- Theory - Actor Description / Definition -->
+					<section>
+						<section data-markdown>
+							## Actors
+						</section>
 
-						+ Do not share memory
-						+ Communicaiton typically done via message passing (e.g. writing to sockets, files, etc)
-						+ Does not require synchronization or locks to communicate (although they could be used
-						  if desired)
-						+ Execution determined by kernel's scheduler
+						<section>
+							<h2>Properties of Actors</h2>
+
+							<ul>
+								<li class="fragment">Actors are persistent</li>
+								<li class="fragment">Encapsulate internal state</li>
+								<li class="fragment">Actors are asynchronous</li>
+								<li class="fragment">Create new actors</li>
+							</ul>
+						</section>
+						<section>
+							<h2>What Can Actors</h2>
+							<ul>
+								<li class="fragment">
+									Receive messages and in response:
+									<ul>
+										<li class="fragment">make local decisions (e.g. alter local state)</li>
+										<li class="fragment">perform arbitrary, side-effecting action</li>
+										<li class="fragment">send messages</li>
+										<li class="fragment">respond to the sender 0 or more times</li>
+									</ul>
+								</li>
+								<li class="fragment">Process exactly one message at a time</li>
+							</ul>
+
+						</section>
+						<section>
+							<h2>Actors</h2>
+
+							<blockquote style="width:90%">
+								Do not communicate by sharing memory; instead, share 
+								memory by communicating.
+							</blockquote>
+
+							<span style="text-align:right;display:block;width:95%;">
+								&dash;
+								<a href="https://golang.org/doc/effective_go.html">Effective Go</a>
+							</span>
+						</section>
 					</section>
 
-					<section data-markdown>
-						## Threading
+					<!-- Theory - Actor Communication -->
+					<section>
+						<section data-markdown>
+							## Actor Communication
+						</section>
 
-						+ Shared memory
-						+ Communicaiton usually done through shared memory
-						+ Requires synchronizaiton and locks to communicate
-						+ Execution determined by kernel's scheduler and / or _also_ the runtime's scheduler
+						<!-- Communication Properties -->
+						<section>
+							<h2>Properties of Communication</h2>
 
+							<ul>
+								<li class="fragment">No channels or intermediaries (such as in CSP)</li>
+								<li class="fragment">"Best Effort" delivery</li>
+								<li class="fragment">At-most-once delivery</li>
+								<li class="fragment">Messages can take arbitrary long to be delivered</li>
+								<li class="fragment">No message ordering guarantees</li>
+							</ul>
+						</section>
 
-						Note:
-						Include **green threads** in this as well
+						<!-- Addresses -->
+						<section>
+							<h2>Address</h2>
+
+							<ul>
+								<li class="fragment">Identifies an Actor</li>
+								<li class="fragment">May also represent a proxy / forwarder to an Actor</li>
+								<li class="fragment">Contains location and transport information</li>
+								<li class="fragment">Location transparency</li>
+							</ul>
+						</section>
+						<section>
+							<h2>Address</h2>
+
+							<ul>
+								<li class="fragment">Many to many relationship between actors and addresses</li>
+								<li class="fragment">One address may represent many actors (pool)</li>
+								<li class="fragment">One actor may have many addresses</li>
+							</ul>
+						</section>
 					</section>
+
+					<!-- Theory - Living with Failure -->
+					<section>
+						<section data-markdown>
+							## Handling Failure
+						</section>
+						<section data-markdown>
+							## Supervision
+
+							The running state of an actor is monitored and managed by another
+							actor (the _Supervisor_)
+						</section>
+						<section data-markdown>
+							## Properties of Supervision
+
+							+ Constantly monitors running state of actor
+							+ Can perform actions based on the state of the actor (e.g. unhandled error)
+							+ Can stop/kill or restart supervised actors
+						</section>
+						<section data-markdown>
+							## Supervision Trees
+
+							![supervisor tree](img/supervision.png)
+						</section>
+						<section data-markdown>
+							## Transparent Lifecycle Management
+
+							+ Addresses do not change during restarts
+							+ Mailboxes are persisted outside the actor instances
+						</section>
+
+					</section>
+
+
+
+				<!-- Practical Usage -->
+				<section data-markdown>
+					# Practical Usage
 				</section>
 
-				<!-- introduction to CSP -->
-				<section>
-					<section data-markdown>
-						# CSP
+					<section>
+						<section data-markdown>
+							## Checking Account
 
-						Communicating Sequential Processes
+							+ A shared account balance
+							+ Multiple, simultaneous withdrawls
+							+ Requires coordination / locking to ensure account is not overdrawn
+						</section>
 
-						Note:
-						Only reason bringing it up is because you will likely read it elsewhere if you delve into this
-						later on.
+						<section data-markdown>
+							## Checking Account
+
+							+ Current balance of <pre>$80</pre>
+							+ Person A wishes to withdrawl <pre>$60</pre>
+							+ Person B wishes to withdrawl <pre>$50</pre>
+						</section>
+
+						<section data-markdown>
+							## Checking Account
+
+								currentBal = Checking.balance;
+								if( currentBal > withdrawlAmt ) {
+									Checking.balance -= withdrawlAmt;
+									return true;
+								} else {
+									return false;
+								}
+						</section>
+
+						<section data-markdown>
+							## Checking Account
+
+							    actor Checking {
+							        var balance = 80
+
+								    def receive = {
+									    case Withdrawl(amt) =>
+									    	if( balance > amt ) {
+										    	balance -= amt
+										    	sender sendMsg true
+										    } else {
+											    sender sendMsg false
+											}
+									}
+								}
+						</section>
+
+						<section data-markdown>
+							## Checking Account
+
+								// send message to withdrawl 60 dollars
+							    Checking sendMsg Withdrawl(60)
+
+								// send message to withdrawl 50 dollars
+							    Checking sendMsg Withdrawl(50)
+						</section>
+					</section>
+
+					<section>
+						<h2>Actor Use-Cases</h2>
+
+						<ul>
+							<li class="fragment">Processing pipeline</li>
+							<li class="fragment">Streaming data</li>
+							<li class="fragment">Multi-user concurrency</li>
+							<li class="fragment">Systems high uptime requirements (Ericsson)</li>
+							<li class="fragment">Concurrent Applications</li>
+						</ul>
 					</section>
 
 					<section data-markdown>
-						**CSP** - A process calculus specifically focused on interactions of concurrent systems
-
-						**Actor Model** - A variant of CSP where "actors" are the concurrency primitive
-
-
-						Note:
-						Talk about how CSP is a **Mathematical Model** *or* **Calculus** for describing concurrent systems
-
-						Mention **Go** here as well, implementation of CSP model
-					</section>
-				</section>
-
-				<!-- introduction to actor model -->
-				<section>
-					<section data-markdown>
-						# Actors
-					</section>
-
-					<section data-markdown>
-						Implementations in the wild:
+						## Frameworks / Languages
 
 						+ Erlang / Elixer
 						+ Akka (JVM)
 						+ Orleans (.NET)
 						+ Celluloid (Ruby)
 						+ Pulsar (Python)
-
-
-						Note:
-						Just to let people understand that this is not a super obscrue concept, but something
-						that is important and gaining traction or already in use by major players today.
-
-						Notice that Erlang / Elixer are languages, the rest are frameworks. **E-Jabber-D**
-
-						Orleans used to build backend for **Halo** multiplayer
 					</section>
 
-					<section data-markdown>
-						Properties of Actors
+				<!-- vanity slide -->
+				<section>
+					<h3>John Murray</h3>
 
-						+ Actors are persistent
-						+ Actors have a name and location (i.e. addressable)
-						+ Encapsulate internal state
-						+ Communicate via immutable messages
-						+ Actors have supervisors and monitors
-					</section>
+					<p style="text-align: left;">
+						johnmurray at appnexus dot com <br />
+						<img src="/img/twitter.ping" /><a href="">@johnmurray_io</a> <br />
+						<a href="">johnmurray</a>
+					</p>
+				</section>
+
+
+
+
+
+
+
+
+
 
 					<section data-markdown>
 						What Can / Do Actors Do?
 
-						+ Receive messages and in response:
-							+ make local decisions (e.g. alter local state)
-							+ perform arbitrary, side-effecting action
-							+ send messages
-							+ respond to the sender 0 or more times
 					</section>
 					
 					<section data-markdown>
