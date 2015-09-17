@@ -51,237 +51,299 @@
 
 					+ Theory
 					+ Practical Usage
-					+ Example and Further Study
+					+ Resources for Further Study
 				</section>
 
-				<!-- Theory -->
 				<section data-markdown>
-					# Theory
+					## Frameworks / Languages
+
+					+ Erlang / Elixer
+					+ Akka (JVM)
+					+ Orleans (.NET)
+					+ CAF (C++)
+					+ Celluloid (Ruby)
+					+ Pulsar (Python)
 				</section>
 
-					<!-- Theory - Description / Definition -->
-					<section>
-						<section data-markdown>
-							## Actor Model
+				<!-- Theory - Description / Definition -->
+				<section>
+					<section data-markdown>
+						## Actor Model
 
-							A method of concurrency in which the universal primitive is an actor
-						</section>
-						<section data-markdown>
-							## Other Concurrency Models
-
-							+ Process-based concurrency
-							+ Thread-based concurrency
-						</section>
+						A method of concurrency in which the universal primitive is an actor
 					</section>
+					<section data-markdown>
+						## Other Concurrency Models
 
-					<!-- Theory - Actor Description / Definition -->
-					<section>
-						<section data-markdown>
-							## Actors
-						</section>
-
-						<section>
-							<h2>Properties of Actors</h2>
-
-							<ul>
-								<li class="fragment">Actors are persistent</li>
-								<li class="fragment">Encapsulate internal state</li>
-								<li class="fragment">Actors are asynchronous</li>
-							</ul>
-						</section>
-						<section>
-							<h2>What Can Actors</h2>
-							<ul>
-								<li class="fragment">Create new actors</li>
-								<li class="fragment">
-									Receive messages and in response:
-									<ul>
-										<li class="fragment">make local decisions (e.g. alter local state)</li>
-										<li class="fragment">perform arbitrary, side-effecting action</li>
-										<li class="fragment">send messages</li>
-										<li class="fragment">respond to the sender 0 or more times</li>
-									</ul>
-								</li>
-								<li class="fragment">Process exactly one message at a time</li>
-							</ul>
-
-						</section>
-						<section>
-							<h2>Actors</h2>
-
-							<blockquote style="width:90%">
-								Do not communicate by sharing memory; instead, share 
-								memory by communicating.
-							</blockquote>
-
-							<span style="text-align:right;display:block;width:95%;">
-								&dash;
-								<a href="https://golang.org/doc/effective_go.html">Effective Go</a>
-							</span>
-						</section>
+						+ Processes
+						+ Threads (system or green)
+						+ Futures
+						+ Coroutines
+						+ CSP
+						+ Petri Nets
+						+ etc.
 					</section>
-
-					<!-- Theory - Actor Communication -->
-					<section>
-						<section data-markdown>
-							## Actor Communication
-						</section>
-
-						<!-- Communication Properties -->
-						<section>
-							<h2>Properties of Communication</h2>
-
-							<ul>
-								<li class="fragment">No channels or intermediaries (such as in CSP)</li>
-								<li class="fragment">"Best Effort" delivery</li>
-								<li class="fragment">At-most-once delivery</li>
-								<li class="fragment">Messages can take arbitrary long to be delivered</li>
-								<li class="fragment">No message ordering guarantees</li>
-							</ul>
-						</section>
-
-						<!-- Addresses -->
-						<section>
-							<h2>Address</h2>
-
-							<ul>
-								<li class="fragment">Identifies an Actor</li>
-								<li class="fragment">May also represent a proxy / forwarder to an Actor</li>
-								<li class="fragment">Contains location and transport information</li>
-								<li class="fragment">Location transparency</li>
-							</ul>
-						</section>
-						<section>
-							<h2>Address</h2>
-
-							<ul>
-								<li class="fragment">Many to many relationship between actors and addresses</li>
-								<li class="fragment">One address may represent many actors (pool)</li>
-								<li class="fragment">One actor may have many addresses</li>
-							</ul>
-						</section>
-					</section>
-
-					<!-- Theory - Living with Failure -->
-					<section>
-						<section data-markdown>
-							## Handling Failure
-						</section>
-						<section data-markdown>
-							## Supervision
-
-							The running state of an actor is monitored and managed by another
-							actor (the _Supervisor_)
-						</section>
-						<section data-markdown>
-							## Properties of Supervision
-
-							+ Constantly monitors running state of actor
-							+ Can perform actions based on the state of the actor (e.g. unhandled error)
-							+ Can stop/kill or restart supervised actors
-						</section>
-						<section data-markdown>
-							## Supervision Trees
-
-							![supervisor tree](img/supervision.png)
-						</section>
-						<section data-markdown>
-							## Transparent Lifecycle Management
-
-							+ Addresses do not change during restarts
-							+ Mailboxes are persisted outside the actor instances
-						</section>
-
-					</section>
-
-
-
-				<!-- Practical Usage -->
-				<section data-markdown>
-					# Practical Usage
 				</section>
 
+				<!-- Theory - Actor Description / Definition -->
+				<section>
 					<section>
-						<section data-markdown>
-							## Checking Account
-
-							+ A shared account balance
-							+ Multiple, simultaneous withdrawls
-							+ Requires coordination / locking to ensure account is not overdrawn
-						</section>
-
-						<section data-markdown>
-							## Checking Account
-
-							+ Current balance of <pre>$80</pre>
-							+ Person A wishes to withdrawl <pre>$60</pre>
-							+ Person B wishes to withdrawl <pre>$50</pre>
-						</section>
-
-						<section data-markdown>
-							## Checking Account
-
-								01|  struct Checking {
-								02|  	balance int
-								03|  }
-								04|  
-								05|  currentBal = Checking.balance;
-								06|  if( currentBal > withdrawlAmt ) {
-								07|  	Checking.balance -= withdrawlAmt;
-								08|  	return true;
-								09|  } else {
-								10|  	return false;
-								11|  }
-						</section>
-
-						<section data-markdown>
-							## Checking Account
-
-								01|  struct Checking {
-								02|  	balance int
-								03|  	lock    Mutex
-								04|  }
-								05|  
-								06|  Checking.lock.Lock();
-								07|  currentBal = Checking.balance;
-								08|  if( currentBal > withdrawlAmt ) {
-								09|  	Checking.balance -= withdrawlAmt;
-								10|  	return true;
-								11|  } else {
-								12|  	return false;
-								13|  }
-								14|  Checking.lock.Free();
-						</section>
-
-						<section data-markdown>
-							## Checking Account
-
-								01|  actor Checking {
-								02|  	var balance = 80
-								03|  
-								04|  	def receive = {
-								05|  		case Withdrawl(amt) =>
-								06|  			if( balance > amt ) {
-								07|  				balance -= amt
-								08|  				sender sendMsg true
-								09|  			} else {
-								10|  				sender sendMsg false
-								11|  			}
-								12|  	}
-								13|  }
-						</section>
-
-						<section data-markdown>
-							## Checking Account
-
-								01|  // send message to withdrawl 60 dollars
-								02|  Checking sendMsg Withdrawl(60)
-								03|
-								04|  // send message to withdrawl 50 dollars
-								05|  Checking sendMsg Withdrawl(50)
-						</section>
+						<h2>Actors</h2>
+						<img src="img/actor.jpg" width="640px" />
 					</section>
 
+					<section>
+						<h2>Properties of Actors</h2>
+
+						<ul>
+							<li class="fragment">Actors are persistent</li>
+							<li class="fragment">Encapsulate internal state</li>
+							<li class="fragment">Actors are asynchronous</li>
+						</ul>
+					</section>
+					<section>
+						<h2>What Can Actors Do</h2>
+						<ul>
+							<li class="fragment">Create new actors</li>
+							<li class="fragment">
+								Receive messages and in response:
+								<ul>
+									<li class="fragment">make local decisions (e.g. alter local state)</li>
+									<li class="fragment">perform arbitrary, side-effecting action</li>
+									<li class="fragment">send messages</li>
+									<li class="fragment">respond to the sender 0 or more times</li>
+								</ul>
+							</li>
+							<li class="fragment">Process exactly one message at a time</li>
+						</ul>
+
+					</section>
+					<section>
+						<h2>Actors</h2>
+
+						<blockquote style="width:90%">
+							Do not communicate by sharing memory; instead, share 
+							memory by communicating.
+						</blockquote>
+
+						<span style="text-align:right;display:block;width:95%;">
+							&dash;
+							<a href="https://golang.org/doc/effective_go.html">Effective Go</a>
+						</span>
+					</section>
+				</section>
+
+
+				<!-- Checking Account Example -->
+				<section>
+					<section data-markdown>
+						## Example
+					</section>
+					<section data-markdown>
+						## Checking Account
+
+						+ A shared account balance
+						+ Multiple, simultaneous withdrawls
+						+ Requires coordination / locking to ensure account is not overdrawn
+					</section>
+
+					<section data-markdown>
+						## Checking Account
+
+						+ Current balance of <pre>$80</pre>
+						+ Person A wishes to withdrawl <pre>$60</pre>
+						+ Person B wishes to withdrawl <pre>$50</pre>
+					</section>
+
+					<section data-markdown>
+						## Checking Account
+
+							01|  struct Checking {
+							02|  	balance int
+							03|  }
+							04|  
+							05|  if( Checking.balance > withdrawlAmt ) {
+							06|  	Checking.balance -= withdrawlAmt;
+							07|  	return true;
+							08|  } else {
+							09|  	return false;
+							10|  }
+					</section>
+
+					<section>
+						<h2>Checking Account</h2>
+						<p><img src="img/seq-simple.png" height="500px" /></p>
+					</section>
+
+					<section>
+						<h2>Checking Account</h2>
+						<p><img src="img/seq-race.png" height="500px" /></p>
+					</section>
+
+					<section data-markdown>
+						## Checking Account
+
+							01|  struct Checking {
+							02|  	balance int
+							03|  	lock    Mutex
+							04|  }
+							05|  
+							06|  Checking.lock.Lock();
+							07|  success = false;
+							08|  if( Checking.balance > withdrawlAmt ) {
+							09|  	Checking.balance -= withdrawlAmt;
+							10|  	success = true;
+							11|  } else {
+							12|  	success = false;
+							13|  }
+							14|  Checking.lock.Free();
+							15|  return success;
+					</section>
+
+					<section data-markdown>
+						## Checking Account
+
+							01|  actor Checking {
+							02|  	var balance = 80
+							03|  
+							04|  	def receive = {
+							05|  		case Withdrawl(amt) =>
+							06|  			if( balance > amt ) {
+							07|  				balance -= amt
+							08|  				sender sendMsg true
+							09|  			} else {
+							10|  				sender sendMsg false
+							11|  			}
+							12|  	}
+							13|  }
+					</section>
+
+					<section data-markdown>
+						## Checking Account
+
+							01|  // send message to withdrawl 60 dollars
+							02|  Checking sendMsg Withdrawl(60)
+							03|
+							04|  // send message to withdrawl 50 dollars
+							05|  Checking sendMsg Withdrawl(50)
+					</section>
+
+					<section>
+						<h2>Checking Account</h2>
+						<p><img src="img/seq-actor.png" height="500px" /></p>
+					</section>
+
+					<section>
+						<img src="img/happy.jpg" width="640px" />
+					</section>
+				</section>
+
+				<!-- Theory - Actor Communication -->
+				<section>
+					<section data-markdown>
+						## Actor Communication
+					</section>
+
+					<!-- Communication Properties -->
+					<section>
+						<h2>Properties of Communication</h2>
+
+						<ul>
+							<li class="fragment">No channels or intermediaries (such as in CSP)</li>
+							<li class="fragment">"Best Effort" delivery</li>
+							<li class="fragment">At-most-once delivery</li>
+							<li class="fragment">Messages can take arbitrary long to be delivered</li>
+							<li class="fragment">No message ordering guarantees</li>
+						</ul>
+					</section>
+
+					<!-- Addresses -->
+					<section>
+						<h2>Address</h2>
+						<img src="img/mailbox.jpg" width="640px" />
+					</section>
+					<section>
+						<h2>Address</h2>
+
+						<ul>
+							<li>Identifies an Actor</li>
+							<li class="fragment">May also represent a proxy / forwarder to an Actor</li>
+							<li class="fragment">Contains location and transport information</li>
+							<li class="fragment">Location transparency</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Address</h2>
+
+						<ul>
+							<li>One address may represent many actors (pool)</li>
+						</ul>
+						<p><img src="img/one-to-many.png" width="650px" /></p>
+					</section>
+					<section>
+						<h2>Address</h2>
+						<ul>
+							<li>One actor may have many addresses</li>
+						</ul>
+						<p><img src="img/address-cardinality.png" width="650px" /></p>
+					</section>
+				</section>
+
+				<!-- Theory - Living with Failure -->
+				<section>
+					<section data-markdown>
+						## Handling Failure
+					</section>
+					<section>
+						<h2>Supervision</h2>
+
+						<img src="img/supervision-required.png" height="500px" />
+						<!-- ![supervision](img/supervision-required.png) -->
+					</section>
+					<section data-markdown>
+						## Supervision
+
+						The running state of an actor is monitored and managed by another
+						actor (the _Supervisor_)
+					</section>
+					<section>
+						<h2>Properties of Supervision</h2>
+
+						<ul>
+							<li class="fragment">Constantly monitors running state of actor</li>
+							<li class="fragment">Can perform actions based on the state of the actor (e.g. unhandled error)</li>
+							<!--<li class="fragment">Can stop/kill or restart supervised actors</li>-->
+						</ul>
+					</section>
+					<section data-markdown>
+						## Properties of Supervision
+
+						![do it again](img/do-it-again.jpg)
+
+					</section>
+					<section data-markdown>
+						## Supervision Trees
+
+						![supervisor tree](img/supervision.png)
+					</section>
+					<section data-markdown>
+						## Transparent Lifecycle Management
+
+						+ Addresses do not change during restarts
+						+ Mailboxes are persisted outside the actor instances
+					</section>
+					<section>
+						<h2>Transparent Lifecycle Management</h2>
+
+						<img src="img/actor-mailbox.png" width="640px" />
+					</section>
+
+				</section>
+
+
+
+				<!-- use cases and benefits -->
+				<section>
 					<section>
 						<h2>Actor Use-Cases</h2>
 
@@ -290,19 +352,120 @@
 							<li class="fragment">Streaming data</li>
 							<li class="fragment">Multi-user concurrency</li>
 							<li class="fragment">Systems high uptime requirements (Ericsson)</li>
-							<li class="fragment">Concurrent Applications</li>
+							<li class="fragment">Applications with shared state</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>Batch Job Processing</h2>
+						<img src="img/batch.gif" width="640px" />
+						<aside class="notes">
+							Describe problem of batch API requests (Balrog)
+						</aside>
+					</section>
+
+					<section>
+						<h2>Breaking Up The Work</h2>
+						<img src="img/bulk-1.png" width="640px" />
+					</section>
+					<section>
+						<h2>Breaking Up The Work</h2>
+						<img src="img/bulk-2.png" width="640px" />
+					</section>
+					<section>
+						<h2>Breaking Up The Work</h2>
+						<img src="img/bulk-3.png" width="640px" />
+					</section>
+					<section>
+						<h2>Breaking Up The Work</h2>
+						<img src="img/bulk-4.png" width="640px" />
+					</section>
+					<section>
+						<h2>Breaking Up The Work</h2>
+						<img src="img/bulk-5.png" width="640px" />
+					</section>
+					<section>
+						<h2>Breaking Up The Work</h2>
+						<img src="img/bulk-6.png" width="640px" />
+					</section>
+					<section>
+						<h2>Breaking Up The Work</h2>
+						<img src="img/bulk-7.png" width="640px" />
+					</section>
+				</section>
+
+
+				<!-- anti use-cases and drawbacks -->
+				<section>
+					<section>
+						<h2>Anti Use-Cases</h2>
+						<ul>
+							<li class="fragment">You are working on a non-concurrent system</li>
+							<li class="fragment">Performance Critical Applications</li>
+							<li class="fragment">Non-concurrent communicaiton is involved</li>
+							<li class="fragment">There is no mutable state</li>
 						</ul>
 					</section>
 
 					<section data-markdown>
-						## Frameworks / Languages
+						## Synchronous & Stateless
 
-						+ Erlang / Elixer
-						+ Akka (JVM)
-						+ Orleans (.NET)
-						+ Celluloid (Ruby)
-						+ Pulsar (Python)
+						    01| actor Foo {
+						    02|   def receive = {
+						    03|     case FooRequest(x) =>
+						    04|        val x = database.runQuery("select * from foo where", x)
+						    05|        val y = redis.get(x.fookey)
+						    06|        sender sendMsg computeResponse(x, y)
+						    07|      }
+						    08|   }
+						    09| }
 					</section>
+
+					<section data-markdown>
+						## Synchronous & Stateless
+
+						    01| def fooResult(x) = Future {
+						    04|   val x = database.runQuery("select * from foo where", x)
+						    05|   val y = redis.get(x.fookey)
+						    06|   computeResponse(x, y)
+						    07| }
+					</section>
+
+					<!-- drawbacks -->
+					<section>
+						<h2>Drawbacks</h2>
+					</section>
+					<section>
+						<h2>Too Many Actors</h2>
+						<img src="img/too-many.jpg" width="640px" />
+
+						<aside class="notes" data-markdown>
+							+ too many messages
+							+ each class an actor
+						</aside>
+					</section>
+					<section>
+						<h2>Testing</h2>
+						<img src="img/dep-graph.png" width="640px" />
+
+						<aside class="notes" data-markdown>
+							+ is a dep graph
+							+ communication patterns can get like
+							+ over time
+						</aside>
+					</section>
+					<section>
+						<h2>Debugging</h2>
+						<img src="img/ikea.jpg" height="500px" />
+
+						<aside class="notes" data-markdown>
+							+ fine in beginning, just a few actors
+							+ system grows, number of actors grow
+							+ system is more complex
+							+ running __top__ command in UNIX
+						</aside>
+					</section>
+				</section>
 
 				<!-- Additional Resources -->
 				<section data-markdown>
@@ -311,9 +474,13 @@
 					+ Books
 					  + [Akka in Action](http://www.amazon.com/Akka-Action-Raymond-Roestenburg/dp/1617291013/ref=sr_1_2?ie=UTF8&qid=1441035724&sr=8-2&keywords=akka&pebp=1441035879648&perid=1BYJY2333TW3S0G4CNG9)
 					  + [Reactive Messaging Patterns](http://www.amazon.com/Reactive-Messaging-Patterns-Actor-Model/dp/0133846830/ref=sr_1_1?ie=UTF8&qid=1441035724&sr=8-1&keywords=akka)
+					  + [Programming Elixer](http://www.amazon.com/Programming-Elixir-Functional-Concurrent-Pragmatic/dp/1937785580/ref=sr_1_4?ie=UTF8&qid=1442432071&sr=8-4&keywords=elixir)
 					+ Talks
 					  + [Actor Model with Hewitt, Meijer, and Szyperski](https://www.youtube.com/watch?v=7erJ1DV_Tlo)
 					  + [Akka in Production](https://www.youtube.com/watch?v=c1heorOM2LE)
+					+ Blogs
+					  + [Don't use Actors for concurrency](https://www.chrisstucchio.com/blog/2013/actors_vs_futures.html)
+					  + [Why has the actor model not succeeded? (97)](http://www.doc.ic.ac.uk/~nd/surprise_97/journal/vol2/pjm2/)
 				</section>
 
 
