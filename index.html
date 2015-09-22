@@ -395,6 +395,10 @@
 					</section>
 				</section>
 
+				<section data-markdown>
+					## Demo
+				</section>
+
 
 				<!-- anti use-cases and drawbacks -->
 				<section>
@@ -403,7 +407,7 @@
 						<ul>
 							<li class="fragment">You are working on a non-concurrent system</li>
 							<li class="fragment">Performance Critical Applications</li>
-							<li class="fragment">Non-concurrent communicaiton is involved</li>
+							<li class="fragment">Non-concurrent communication is involved</li>
 							<li class="fragment">There is no mutable state</li>
 						</ul>
 					</section>
@@ -460,10 +464,10 @@
 						<img src="img/ikea.jpg" height="500px" />
 
 						<aside class="notes" data-markdown>
-							+ fine in beginning, just a few actors
-							+ system grows, number of actors grow
-							+ system is more complex
-							+ running __top__ command in UNIX
+							+ state + concurrency = complex
+							+ true of other models, actors do not solve htis for you
+							+ running __top__ command in UNIX (actor is abstraction)
+							+ thread dump, actor moved by scheduler
 						</aside>
 					</section>
 				</section>
